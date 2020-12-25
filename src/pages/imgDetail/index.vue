@@ -79,6 +79,12 @@
 				</view>
 			</view>
 		</view>
+		<!-- 下载图片 -->
+		<view class="download">
+			<view class="download_btn">
+				下载图片
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -312,5 +318,22 @@
 			}
 		}
 	}
-
+	.download{
+		height:120rpx;
+		display: flex;
+		align-items:center;
+		justify-content: center;
+		.download_btn{
+			width: 90%;
+			height:85%;
+			border-radius: 20rpx;
+			background-color: $main;
+			color:#fff;
+			font-size:40rpx;
+			// font-weight: 600;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
 </style>
