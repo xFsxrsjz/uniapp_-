@@ -6,11 +6,12 @@
 	<scroll-view scroll-y @scrolltolower="handleToLower" class="recommend_view" v-if="recommends.length>0">
 		<!-- 推荐 -->
 		<view class="recommend_wrap">
-			<view class="recommend_item"
+			<navigator class="recommend_item"
 				v-for="item in recommends"
-				:key="item.id">
+				:key="item.id"
+				:url="`/pages/album/index?id=${item.target}`">
 				<image :src="item.thumb" mode="widthFix"></image>
-			</view>
+			</navigator>
 		</view>
 		<!-- 月份 -->
 		<view class="monthes_wrap">
@@ -25,8 +26,10 @@
 				<view class="monthes_title_more">更多></view>
 			</view>
 			<view class="monthes_content">
-				<view class="monthes_item" v-for="item in monthes.items" :key="item.id">
-					<image mode="aspectFill" :src="item.thumb+item.rule.replace('$<Height>',360)">
+				<view class="monthes_item" v-for="(item,index) in monthes.items" :key="item.id">
+					<go-detail :list="monthes.items" :index="index" >
+					    <image mode="aspectFill" :src="item.thumb+item.rule.replace('$<Height>',360)"></image>
+					</go-detail>
 				</view>
 			</view>
 		</view>
@@ -36,8 +39,10 @@
 				<view class="hot_style">热门</view>
 			</view>
 			<view class="hot_content">
-				<view class="hot_item" v-for="item in hots" :key="item.id">
-					<image mode="widthFix" :src="item.thumb"></image>
+				<view class="hot_item" v-for="(index,item) in hots" :key="item.id">
+					<go-detail :list="hots" :index="index">
+						<image mode="widthFix" :src="item.thumb"></image>
+					</go-detail>
 				</view>
 			</view>
 		</view>
@@ -46,7 +51,11 @@
 
 <script>
 	import moment from "moment"
-	export default{
+	import goDetail from "@/components/goDetail";
+	export default {
+		components:{
+			goDetail
+		},
 		data(){
 			return{
 				//推荐列表
@@ -67,6 +76,9 @@
 		},
 		/* 组件挂载完毕 */
 		mounted() {
+			uni.setNavigationBarTitle({
+				title:"推荐"
+			}),
 			this.getList()
 		},
 		methods:{
@@ -80,6 +92,10 @@
 					//判断还有没有下一页数据
 					if(result.res.vertical.length===0){
 						this.hasMore=false
+						uni.showToast({
+							title:"圣 诞 快 乐",
+							icon:"none"
+						})
 						return
 					}
 					if(this.recommends.length===0){
@@ -90,7 +106,7 @@
 					}
 					//数组拼接的方式
 					this.hots=[...this.hots,...result.res.vertical]
-					console.log(this.hots)
+					console.log(this.recommends)
 				})
 			},
 			//滚动条触底事件

@@ -8,7 +8,7 @@
 						:values="items.map(v=>v.title)" 
 						@clickItem="onClickItem" 
 						style-type="text" 	
-						active-color="$yellow"
+						active-color="$main"
 					>
 					</uni-segmented-control>
 				</view>
@@ -45,9 +45,9 @@
 					{title:"推荐"},
 					{title:"分类"},
 					{title:"最新"},
-					{title:"专辑"}
+					{title:"专辑"},
 				],
-				current: 0
+				current: 3,
 			}
 		},
 	    components:{
