@@ -55,9 +55,9 @@
 		},
 		onLoad(options) {
 			console.log(options)
-			// this.id=options.id
+			this.id=options.id
 			// this.id="5dea515de7bce73981faf1a9"
-			this.id="5d5f8e45e7bce75ae7fb8278"
+			// this.id="5d5f8e45e7bce75ae7fb8278"图片详情
 			this.getList()
 		},
 		//整个页面滚动， 使用onReachBottom触底事件 上拉加载下一页事件

@@ -39,7 +39,7 @@
 				<view class="hot_style">热门</view>
 			</view>
 			<view class="hot_content">
-				<view class="hot_item" v-for="(index,item) in hots" :key="item.id">
+				<view class="hot_item" v-for="(item,index) in hots" :key="item.id">
 					<go-detail :list="hots" :index="index">
 						<image mode="widthFix" :src="item.thumb"></image>
 					</go-detail>
@@ -52,9 +52,11 @@
 <script>
 	import moment from "moment"
 	import goDetail from "@/components/goDetail";
+	import recommendItem from "../../Modul/recommendItem.vue"
 	export default {
 		components:{
-			goDetail
+			goDetail,
+			recommendItem
 		},
 		data(){
 			return{
@@ -106,7 +108,7 @@
 					}
 					//数组拼接的方式
 					this.hots=[...this.hots,...result.res.vertical]
-					console.log(this.recommends)
+					console.log( this.hots)
 				})
 			},
 			//滚动条触底事件

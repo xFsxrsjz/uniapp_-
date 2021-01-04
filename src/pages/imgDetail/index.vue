@@ -3,6 +3,9 @@
  moment.js处理时间格式
   fromNow()显示XXX月前
   moment.locale("zh-cn")使用中文语言
+ 下载图片 
+  uni.downloadFile()
+  uni.saveImageToPhotosAlbum()
  -->
 <template>
 	<view>
@@ -25,55 +28,87 @@
 		<!-- 点赞收藏 -->
 		<view class="user_rank">
 			<view class="rank">
-				<text class="iconfont icondianzan">{{imgDetail.rank}}</text>
+				<text class="iconfont iconshengdanjie-liwu">{{imgDetail.rank}}</text>
 			</view>
 			<view class="user_collect">
-				<text class="iconfont iconshoucang">收藏</text>
+				<text class="iconfont iconshengdanjie-liwu">收藏</text>
 			</view>
 		</view>
 		<!-- 专辑 -->
 		<view class="album_wrap">
 			<view class="album_title">相关</view>
 			<view class="album_list">
-				<!-- <view class="album_item" v-for="item in album" :key="item.id"> -->
-				<view class="album_item">
+				<view class="album_item" v-for="item in album" :key="item.id">
+				<!-- <view class="album_item"> -->
 					<view class="album_cover">
 						<image :src="imgDetail.thumb"></image>
 					</view>
 					<view class="album_info">
 						<view class="album_info_text">专辑</view>
 						<view class="album_info_name">{{item.name}}小熊猫</view>
-						<text class="iconfont iconiconfontjiantou4"></text>
+						<text class="iconfont iconshengdanshu2"></text>
 					</view>
 				</view>
 			</view>
 		</view>
 		<!-- 最热评论 -->
-		<view class="comment hot">
+		<view class="comment hot" v-if="hot.length">
 			<view class="comment_title">
-				<text class="iconfont iconhot1"></text>
+				<text class="iconfont iconshengdanmao1"></text>
 				<text class="comment_text">最热评论</text>
 			</view>
 			<view class="comment_list">
-				<view class="comment_item">
+				<view class="comment_item" v-for="item in hot" :key="item.id">
 					<view class="comment_user">
 						<view class="user_icon">
-							<image :src="imgDetail.thumb"></image>
+							<image :src="item.user.avatar"></image>
 						</view>
 						<view class="user_name">
-							<view class="user_nickname">{{imgDetail.user.name}}</view>
+							<view class="user_nickname">{{item.user.name}}</view>
 							<view class="user_time">
-								{{imgDetail.cnTime}}
+								{{item.cnTime}}
+							</view>
+						</view>	
+					</view>
+					<view class="comment_desc"> 
+						<view class="comment_content">
+							<text>{{item.content}}</text>
+						</view>
+						<view class="comment_like">
+							<text class="iconfont iconshengdanjie-liwu"></text>
+							<text>{{item.size}}</text>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+		<!-- 最新图片 -->
+		<view class="comment hot"  v-if="comment.length">
+			<view class="comment_title">
+				<text class="iconfont iconpinglun"></text>
+				<text class="comment_text">最新评论</text>
+			</view>
+			<view class="comment_list">
+				<view class="comment_item" v-for="item in comment" :key="item.id">
+					<view class="comment_user">
+						<view class="user_icon">
+							<image :src="item.user.avatar"></image>
+						</view>
+						
+						<view class="user_name">
+							<view class="user_nickname">{{item.user.name}}</view>
+							<view class="user_time">
+								{{item.cnTime}}
 							</view>
 						</view>
 					</view>
 					<view class="comment_desc">
 						<view class="comment_content">
-							<text>{{imgDetail.tag[1]}}</text>
+							<text>{{item.content}}</text>
 						</view>
 						<view class="comment_like">
-							<text class="iconfont icondianzan"></text>
-							<text>666</text>
+							<text class="iconfont iconshengdanjie-liwu"></text>
+							<text>{{item.size}}</text>
 						</view>
 					</view>
 				</view>
@@ -81,7 +116,7 @@
 		</view>
 		<!-- 下载图片 -->
 		<view class="download">
-			<view class="download_btn">
+			<view class="download_btn" @click="handleDownload">
 				下载图片
 			</view>
 		</view>
@@ -96,9 +131,11 @@
 	export default{
 		data(){
 			return{
-				imgDetail:{},//图片信息
-				album:[],
-				imgIndex:0,//图片索引
+				imgDetail:{},	//图片信息
+				album:[],		//专辑数据
+				comment:[],		//最新评论
+				hot:[],			//最热评论
+				imgIndex:0,		//图片索引
 			}
 		},
 		components:{
@@ -114,7 +151,7 @@
 			getData(){
 				const {imgList}=getApp().globalData
 				this.imgDetail=imgList[this.imgIndex]
-				console.log('all',this.imgDetail)
+				console.log('imgDetail',this.imgDetail)
 				this.imgDetail.newThumb=this.imgDetail.thumb+this.imgDetail.rule.replace('$<Height>',350)
 				
 				// xxx年前的数据
@@ -123,12 +160,24 @@
 				this.getComment(this.imgDetail.id)
 			},
 			getComment(id){
-				console.log(id)
+				console.log('id',id)
 				this.request({
-					url:"http://157.122.54.189:9088/image/v2/wallpaper/wallpaper/${id}/comment",
+					url:`http://157.122.54.189:9088/image/v2/wallpaper/wallpaper/${id}/comment`,
 				}).then(result=>{
-					console.log(result)
-					this.album = result.res.album;
+					console.log('result',result)
+					this.album = result.res.album
+					
+					// 给hot数组中的对象添加一个时间属性 xxx月前
+					result.res.hot.forEach(
+					  v => (v.cnTime = moment(v.atime * 1000).fromNow())
+					);
+					result.res.comment.forEach(
+					  v => (v.cnTime = moment(v.atime * 1000).fromNow())
+					);
+
+					this.comment= result.res.comment
+					this.hot= result.res.hot
+					console.log('hot',this.hot) 
 				})
 			},
 			//滑动事件
@@ -157,6 +206,46 @@
 						icon:"none"
 					})
 				}
+			},//点击下载图片
+			async handleDownload(){
+				await uni.showLoading({
+					title:"下载中"
+				})
+				
+				//1 将远程文件下载到小程序的内存中 tempFilePath
+				/* uni.downloadFile({
+					url:this.imgDetail.img
+				}).then(result=>{
+					console.log(result)
+				}) */
+				const downloadRes = await uni.downloadFile({url:this.imgDetail.img})
+				//将下载的的图片存放在临时路径中
+				const {tempFilePath} = downloadRes[1]
+				console.log(tempFilePath)
+				
+				//2 将小程序中的零时文件存在本地
+				// uni.saveImageToPhotosAlbum({
+				// 	filePath:tempFilePath
+				// }).then(saveRes=>{
+				// 	console.log(saveRes)
+				// })
+				const saveRes = await uni.saveImageToPhotosAlbum({ filePath:tempFilePath })
+				console.log('saveRes',saveRes)
+				
+				//提示
+				if(saveRes[0]===null){
+					uni.hideLoading()
+					await uni.showToast({
+						title:'下载成功',
+						icon:'none'
+					})
+					return 
+				}
+				uni.hideLoading()
+				await uni.showToast({
+					title:'下载失败',
+					icon:'none'
+				})
 			}
 		}
 	}
@@ -277,6 +366,9 @@
 			border-bottom: 10rpx solid #eee;
 			margin: 15rpx;
 			.comment_item{
+				border-top: 1rpx solid #eee;
+				margin:15rpx 0;
+				padding:15rpx 0;
 				// 用户信息
 				.comment_user{
 					display: flex;
@@ -304,8 +396,9 @@
 				margin: 15rpx 0;
 				display: flex;
 				justify-content: space-between;
-				.comment_content{
+				.comment_content{ 
 					text{
+						padding-left: 98rpx;
 						display: inline;
 						float: left;
 					}

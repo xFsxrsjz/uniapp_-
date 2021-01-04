@@ -12,7 +12,7 @@
 					>
 					</uni-segmented-control>
 				</view>
-				<view class="iconfont iconsearch"></view>
+				<view class="iconfont">&#xe60b;</view>
 			</view>
 			<view class="home_tab_content">
 				<view v-if="current === 0">
@@ -47,7 +47,7 @@
 					{title:"最新"},
 					{title:"专辑"},
 				],
-				current: 3,
+				current: 0,
 			}
 		},
 	    components:{
@@ -76,11 +76,12 @@
 				width:60%;
 				margin:0 auto;
 			}
-			.iconsearch{
+			.iconfont{
 				position:absolute;
 				top:25%;
 				transform: translate(-50%);
 				right:5%;
+				color: none;
 			}
 		}
 		.home_tab_content{
