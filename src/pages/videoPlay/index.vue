@@ -74,14 +74,13 @@
 <style lang="scss">
 	.video_play{
 		position: relative;
-		height: 100%;
 		image{
 			position: absolute;
-			width: 100%;
-			height: 100%;
+			width: 100vw;
+			height: 100vh;
 			z-index:-1;//不会挡住其他标签
 			// 滤镜：背景模糊
-			filter: blur(20rpx);
+			filter: blur(10rpx);
 		}
 		.video_tool{
 			height:80rpx;
@@ -112,6 +111,7 @@
 		.video_warp{
 			display: flex;
 			justify-content: center;
+			margin-top: 100rpx;
 			video{
 				width: 360rpx;
 				height: 600rpx;
