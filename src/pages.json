@@ -53,7 +53,20 @@
 			"style": {
 				"navigationBarTitleText": "Merry Chrismas"
 			}
+		},
+		{
+			"path": "pages/imgCategory/index",
+			"style": {
+				"navigationBarTitleText": "Merry Chrismas"
+			}
+		},
+		{
+			"path": "pages/videoPlay/index",
+			"style": {
+				"navigationBarTitleText": "Merry Chrismas"
+			}
 		}
+		
 		
     ],
 	"globalStyle": {
